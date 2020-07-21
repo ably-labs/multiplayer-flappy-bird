@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Flappy Bird</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="app.js" charset="utf-8"></script>
-  </head>
-  <body>
-
-  <div class="border-left"></div>
-  <div class="game-container">
-      <div class="border-top"></div>
+<head>
+  <meta charset="UTF-8">
+  <title>Multiplayer Flappy Bird</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"></link>
+  <script src="app.js" charset="utf-8"></script>
+</head>
+<body>
+  
+  <div class="borderLeft"></div>
+    <div class="game-container">
+      <div class="borderTop"></div>
       <div class="sky">
-          <div class="bird"></div>
+        <div class="bird"></div>
       </div>
+    </div>
+  <div class="rightSection">
+    <h1 class="title">Multiplayer Flappy Bird</h1>
+    <p class="instruction">Click on the game area to start, use space bar to jump</p>
+    <div class="my-info">
+      <div class="nickname">
+        <input id="nickname-input" maxlength="18"></input>
+        <button id="update-nickname">Update nickname</button>
+      </div>
+      <div class="my-score">
+        <p id="score-label">Score: 0</p>
+      </div>
+    </div>
+    <div class="scoreboard">
+      <h2 class="score-title">Live Leaderboard</h2>
+      <div class="top-score">
+        <p id="top-label"></p>
+      </div>
+      <ul id="score-list" class="score-list">
+      </ul>
+    </div>
   </div>
-  <div class="ground-container">
-    <div class="ground-moving"></div>
-  </div>
-  <div class="border-right"></div>
-
-  </body>
+  <div class="ground-moving"></div>
+</body>
 </html>

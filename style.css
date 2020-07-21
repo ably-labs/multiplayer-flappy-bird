@@ -1,114 +1,268 @@
 body {
-    display: flex;
+  font-family: "VT323", monospace;
+  margin: 0;
+}
+
+input {
+  font-family: inherit;
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: 16px;
+  text-align: center;
+  width: 120px;
+  color: #533c44;
+}
+
+input:focus {
+  outline: none;
+}
+
+button {
+  display: inline-block;
+  padding: 10px 28px;
+  border: 2px solid white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 16px;
+  font-family: inherit;
+  color: white;
+  background-color: #533c44;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #423036;
+}
+
+button:active {
+  background-color: #423036;
+}
+
+.borderLeft {
+  width: 60px;
+  height: 100vh;
+  position: absolute;
+  background-color: white;
+  z-index: +1;
+  top: 0;
+}
+
+.rightSection {
+  width: calc(100% - 60px - 500px);
+  height: 100vh;
+  position: absolute;
+  background-color: white;
+  z-index: +1;
+  left: 560px;
+  top: 0px;
+}
+
+.borderTop {
+  width: 500px;
+  height: 60px;
+  position: absolute;
+  background-color: white;
+  z-index: +1;
 }
 
 .game-container {
-    width: 500px;
-    height: 730px;
-    position: absolute;
-    left: 80px;
-}
-
-.border-left {
-    width: 80px;
-    height: 790px;
-    position:  absolute;
-    background-color: white;
-    z-index: +2;
-}
-
-.border-right {
-    width: 80px;
-    height: 790px;
-    position: absolute;
-    background-color: white;
-    z-index: +2;
-    left: 580px;
-}
-
-.border-top {
-    width: 660px;
-    height: 50px;
-    position:  absolute;
-    background-color: white;
-    z-index: +2;
-    top: -50px;
+  width: 500px;
+  height: 730px;
+  position: absolute;
+  left: 60px;
 }
 
 .sky {
-    background-image: url('fb-game-background.png');
-    width: 500px;
-    height: 580px;
-    position: absolute;
-}
-
-.ground {
-    background-image: url('bottom-background.png');
-    width: 500px;
-    height: 150px;
-    position: absolute;
-    top: 580px;
-    z-index: +1;
+  background-image: url("fb-game-background.png");
+  width: 500px;
+  height: 580px;
+  position: absolute;
+  top: 60px;
+  z-index: -1;
 }
 
 .bird {
-    background-image: url('flappy-bird.png');
-    position: absolute;
-    width: 60px;
-    height: 45px;
-    left: 220px;
-    bottom: 100px;
+  background-image: url("flappy-bird.png");
+  width: 60px;
+  height: 45px;
+  position: absolute;
+  left: 220px;
+  bottom: 300px;
+}
+
+.other-bird {
+  background-image: url("flappy-bird.png");
+  width: 60px;
+  height: 45px;
+  position: absolute;
+  z-index: -1;
+  opacity: 0.2;
 }
 
 .obstacle {
-    background-image: url('flappybird-pipe.png');
-    width: 60px;
-    height: 300px;
-    position: absolute;
+  background-image: url("flappybird-pipe.png");
+  width: 60px;
+  height: 300px;
+  position: absolute;
 }
 
 .topObstacle {
-    background-image: url('flappybird-pipe.png');
-    transform: rotate(180deg);
-    width: 60px;
-    height: 300px;
-    position: absolute;
+  background-image: url("flappybird-pipe.png");
+  transform: rotate(180deg);
+  width: 60px;
+  height: 300px;
+  position: absolute;
 }
 
 @keyframes slideright {
-    from {
-        background-position: 10000%;
-    }
-    to {
-        background-position: 0%;
-    }
+  from {
+    background-position: 10000%;
   }
-  
-  @-webkit-keyframes slideright {
-    from {
-        background-position: 10000%;
-    }
-    to {
-        background-position: 0%;
-    }
+  to {
+    background-position: 0%;
   }
+}
 
-  .ground-container {
-      height: 150px;
-      width: 580px;
-      left: 80px;
-      position:  absolute;
+@-webkit-keyframes slideright {
+  from {
+    background-position: 10000%;
   }
-  
-  .ground-moving {
-    position: absolute;
-    top: 580px;
-    height: 150px;
-    background-image: url('bottom-background.png');
-    background-repeat: repeat-x;
-    animation: slideright 100s infinite linear;
-    -webkit-animation: slideright 100s infinite linear;
-    width: 100%;
-    z-index: +1;
+  to {
+    background-position: 0%;
   }
+}
 
+.ground-container {
+  width: 500px;
+  height: 150px;
+}
+
+.ground {
+  position: absolute;
+  top: 630px;
+  height: 150px;
+  background-image: url("bottom-background.png");
+  width: 500px;
+  z-index: +1;
+  margin-left: 60px;
+}
+
+.ground-moving {
+  position: absolute;
+  top: 630px;
+  height: 150px;
+  background-image: url("bottom-background.png");
+  background-repeat: repeat-x;
+  animation: slideright 100s infinite linear;
+  -webkit-animation: slideright 100s infinite linear;
+  min-width: 100%;
+}
+
+.title {
+  margin: 60px 20px 20px;
+  color: #533c44;
+  font-size: 4vw;
+  text-shadow: 2px 2px #dadada;
+  text-align: center;
+  width: 600px;
+}
+
+.instruction {
+  margin: 0px 20px 0px;
+  text-align: center;
+  width: 600px;
+  font-size: 25px;
+}
+
+.my-info {
+  display: flex;
+  justify-content: center;
+  width: 600px;
+}
+
+.nickname {
+  display: flex;
+  margin: 20px 20px 40px 60px;
+  text-align: center;
+}
+
+.my-score {
+  font-size: 22px;
+  margin-top: 1%;
+  color: #533c44;
+}
+
+.scoreboard {
+  position: relative;
+  max-width: 450px;
+  margin: 20px 20px 20px 80px;
+  padding: 20px;
+  background-color: #ded895;
+  background-image: url(top-right-brown.png), url(top-left-brown.png),
+    url(bottom-right-brown.png), url(bottom-left-brown.png);
+  background-position: top right, top left, bottom right, bottom left;
+  background-repeat: no-repeat;
+}
+
+.scoreboard:before {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  display: block;
+  width: calc(100% - 20px);
+  height: calc(100% - 4px);
+  border-top: 2px solid #b1878f;
+  border-bottom: 2px solid #b1878f;
+  z-index: 1;
+}
+
+.scoreboard:after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 0px;
+  display: block;
+  width: calc(100% - 4px);
+  height: calc(100% - 20px);
+  border-left: 2px solid #b1878f;
+  border-right: 2px solid #b1878f;
+  z-index: 1;
+}
+
+.score-title {
+  margin: 0 0 0;
+  font-family: "VT323", monospace;
+  font-size: 3em;
+  text-align: center;
+  color: #ee5140;
+  text-shadow: 2px 2px #f0eaa1;
+}
+
+.top-score {
+  text-align: center;
+  margin: 0px 20px;
+  font-size: 20px;
+  color: #533c44;
+}
+
+.score-list {
+  position: relative;
+  height: 250px;
+  max-height: 250px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px 20px;
+  list-style: none;
+  font-size: 2em;
+  font-weight: bolder;
+  color: white;
+  text-shadow: 1px 1px 1px black;
+}
