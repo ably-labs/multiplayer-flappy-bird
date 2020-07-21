@@ -1,0 +1,25 @@
+{
+  "name": "multiplayer-flappy-bird",
+  "version": "1.0.0",
+  "description": "This repo contains the project files for a multiplayer version of the flappy bird game.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Srushtika/multiplayer-flappy-bird.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Srushtika/multiplayer-flappy-bird/issues"
+  },
+  "homepage": "https://github.com/Srushtika/multiplayer-flappy-bird#readme",
+  "dependencies": {
+    "ably": "^1.2.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  }
+}
