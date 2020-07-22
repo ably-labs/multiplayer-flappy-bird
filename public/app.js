@@ -42,6 +42,13 @@ let myScore = 0;
 let highScore = 0;
 let highScoreNickname = "anonymous panda";
 let myNickname;
+let myClientId;
+let myPublishChannel;
+let gameChannel;
+let gameChannelName = "flappy-game";
+let allBirds = {};
+let topScoreChannel;
+let topScoreChannelName = "flappy-top-score";
 
 if (localStorage.getItem("flappy-nickname")) {
   myNickname = localStorage.getItem("flappy-nickname");
@@ -50,7 +57,12 @@ if (localStorage.getItem("flappy-nickname")) {
   localStorage.setItem("flappy-nickname", myNickname);
 }
 
+const realtime = new Ably.Realtime({
+  authUrl: "/auth",
+});
+
 document.addEventListener("DOMContentLoaded", () => {
+  const sky = document.querySelector(".sky");
   const bird = document.querySelector(".bird");
   const gameDisplay = document.querySelector(".game-container");
   const ground = document.querySelector(".ground-moving");
@@ -91,19 +103,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  gameDisplay.onclick = function () {
-    if (!gameStarted) {
-      gameStarted = true;
-      document.addEventListener("keydown", control);
-      gameTimerId = setInterval(startGame, 20);
-      generateObstacles();
-    }
-  };
+  realtime.connection.once("connected", () => {
+    myClientId = realtime.auth.clientId;
+    myPublishChannel = realtime.channels.get("bird-position-" + myClientId);
+    topScoreChannel = realtime.channels.get(topScoreChannelName, {
+      params: { rewind: 1 },
+    });
+    topScoreChannel.subscribe((msg) => {
+      highScore = msg.data.score;
+      highScoreNickname = msg.data.nickname;
+      topScoreLabel.innerHTML =
+        "Top score - " + highScore + "pts by " + highScoreNickname;
+      topScoreChannel.unsubscribe();
+    });
+    gameChannel = realtime.channels.get(gameChannelName);
+    gameDisplay.onclick = function () {
+      if (!gameStarted) {
+        gameStarted = true;
+        gameChannel.presence.enter({
+          nickname: myNickname,
+        });
+        sendPositionUpdates();
+        showOtherBirds();
+        document.addEventListener("keydown", control);
+        gameTimerId = setInterval(startGame, 20);
+      }
+    };
+  });
 
   function startGame() {
     birdBottom -= gravity;
     bird.style.bottom = birdBottom + "px";
     bird.style.left = birdLeft + "px";
+    for (item in allBirds) {
+      if (allBirds[item].targetBottom) {
+        let tempBottom = parseInt(allBirds[item].el.style.bottom);
+        tempBottom += (allBirds[item].targetBottom - tempBottom) * 0.5;
+        allBirds[item].el.style.bottom = tempBottom + "px";
+      }
+    }
   }
 
   function control(e) {
@@ -117,10 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
     bird.style.bottom = birdBottom + "px";
   }
 
-  function generateObstacles() {
+  function generateObstacles(randomHeight) {
     if (!isGameOver) {
       let obstacleLeft = 500;
-      let obstacleBottom = Math.random() * 60;
+      let obstacleBottom = randomHeight;
 
       const obstacle = document.createElement("div");
       const topObstacle = document.createElement("div");
@@ -140,7 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
         topObstacle.style.left = obstacleLeft + "px";
         if (obstacleLeft === 220) {
           myScore++;
-          scoreLabel.innerHTML = "Score: " + myScore;
+          setTimeout(() => {
+            sortLeaderboard();
+          }, 250);
         }
         if (obstacleLeft === -50) {
           clearInterval(timerId);
@@ -158,11 +198,11 @@ document.addEventListener("DOMContentLoaded", () => {
           for (timer in obstacleTimers) {
             clearInterval(obstacleTimers[timer]);
           }
+          sortLeaderboard();
           gameOver();
           isGameOver = true;
         }
       }
-      setTimeout(generateObstacles, 3000);
     }
   }
 
@@ -173,5 +213,91 @@ document.addEventListener("DOMContentLoaded", () => {
     document.removeEventListener("keydown", control);
     ground.classList.add("ground");
     ground.classList.remove("ground-moving");
+    gameChannel.presence.leave();
+    gameChannel.detach();
+    realtime.connection.close();
+  }
+
+  function sendPositionUpdates() {
+    let publishTimer = setInterval(() => {
+      myPublishChannel.publish("pos", {
+        bottom: parseInt(bird.style.bottom),
+        nickname: myNickname,
+        score: myScore,
+      });
+      if (isGameOver) {
+        clearInterval(publishTimer);
+        myPublishChannel.detach();
+      }
+    }, 100);
+  }
+
+  function showOtherBirds() {
+    gameChannel.subscribe("game-state", (msg) => {
+      for (let item in msg.data.birds) {
+        if (item != myClientId) {
+          let newBottom = msg.data.birds[item].bottom;
+          let newLeft = msg.data.birds[item].left;
+          let isDead = msg.data.birds[item].isDead;
+          if (allBirds[item] && !isDead) {
+            allBirds[item].targetBottom = newBottom;
+            allBirds[item].left = newLeft;
+            allBirds[item].isDead = msg.data.birds[item].isDead;
+            allBirds[item].nickname = msg.data.birds[item].nickname;
+            allBirds[item].score = msg.data.birds[item].score;
+          } else if (allBirds[item] && isDead) {
+            sky.removeChild(allBirds[item].el);
+            delete allBirds[item];
+          } else {
+            if (!isGameOver) {
+              allBirds[item] = {};
+              allBirds[item].el = document.createElement("div");
+              allBirds[item].el.classList.add("other-bird");
+              sky.appendChild(allBirds[item].el);
+              allBirds[item].el.style.bottom = newBottom + "px";
+              allBirds[item].el.style.left = newLeft + "px";
+              allBirds[item].isDead = msg.data.birds[item].isDead;
+              allBirds[item].nickname = msg.data.birds[item].nickname;
+              allBirds[item].score = msg.data.birds[item].score;
+            }
+          }
+        } else if (item == myClientId) {
+          allBirds[item] = msg.data.birds[item];
+        }
+      }
+      if (msg.data.highScore > highScore) {
+        highScore = msg.data.highScore;
+        highScoreNickname = msg.data.highScoreNickname;
+        topScoreLabel.innerHTML =
+          "Top score - " + highScore + "pts by " + highScoreNickname;
+      }
+      if (msg.data.launchObstacle == true && !isGameOver) {
+        generateObstacles(msg.data.obstacleHeight);
+      }
+    });
+  }
+
+  function sortLeaderboard() {
+    scoreLabel.innerHTML = "Score: " + myScore;
+    let listItems = "";
+    let leaderBoard = new Array();
+    for (let item in allBirds) {
+      leaderBoard.push({
+        nickname: allBirds[item].nickname,
+        score: allBirds[item].score,
+      });
+    }
+    leaderBoard.sort((a, b) => {
+      b.score - a.score;
+    });
+    leaderBoard.forEach((bird) => {
+      listItems +=
+        "<li class='score-item'><span class='name'>" +
+        bird.nickname +
+        "</span><span class='points'>" +
+        bird.score +
+        "pts</span></li>";
+    });
+    scoreList.innerHTML = listItems;
   }
 });

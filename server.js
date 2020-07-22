@@ -11,6 +11,9 @@ let birds = {};
 let highScore = 0;
 let highScoreNickname = "anonymous panda";
 let birdChannels = {};
+let obstacleTimer = 0;
+let topScoreChannel;
+let topScoreChannelName = "flappy-top-score";
 
 const app = express();
 app.use(express.static("public"));
@@ -46,6 +49,14 @@ const listener = app.listen(process.env.PORT, () => {
 });
 
 realtime.connection.once("connected", () => {
+  topScoreChannel = realtime.channels.get(topScoreChannelName, {
+    params: { rewind: 1 },
+  });
+  topScoreChannel.subscribe("score", (msg) => {
+    highScore = msg.data.score;
+    highScoreNickname = msg.data.nickname;
+    topScoreChannel.unsubscribe();
+  });
   gameChannel = realtime.channels.get(gameChannelName);
   gameChannel.presence.subscribe("enter", (msg) => {
     if (++birdCount === 1 && !isGameTickerOn) {
@@ -54,6 +65,7 @@ realtime.connection.once("connected", () => {
     }
     birds[msg.clientId] = {
       id: msg.clientId,
+      left: 220,
       bottom: 350,
       isDead: false,
       nickname: msg.data.nickname,
@@ -86,16 +98,34 @@ function subscribeToPlayerInput(id) {
       if (msg.data.score > highScore) {
         highScore = msg.data.score;
         highScoreNickname = msg.data.nickname;
+        topScoreChannel.publish("score", {
+          score: highScore,
+          nickname: highScoreNickname,
+        });
       }
     }
   });
 }
 
 function startGameTick() {
-  gameStateObj = {
-    birds: birds,
-    highScore: highScore,
-    highScoreNickname: highScoreNickname,
-  };
+  if (obstacleTimer === 0 || obstacleTimer === 3000) {
+    obstacleTimer = 0;
+    gameStateObj = {
+      birds: birds,
+      highScore: highScore,
+      highScoreNickname: highScoreNickname,
+      launchObstacle: true,
+      obstacleHeight: Math.random() * 60,
+    };
+  } else {
+    gameStateObj = {
+      birds: birds,
+      highScore: highScore,
+      highScoreNickname: highScoreNickname,
+      launchObstacle: false,
+      obstacleHeight: "",
+    };
+  }
+  obstacleTimer += 100;
   gameChannel.publish("game-state", gameStateObj);
 }
