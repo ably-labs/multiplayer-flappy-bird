@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
           myScore++;
           setTimeout(() => {
             sortLeaderboard();
-          }, 250);
+          }, 400);
         }
         if (obstacleLeft === -50) {
           clearInterval(timerId);
@@ -291,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
       b.score - a.score;
     });
     leaderBoard.forEach((bird) => {
+      console.log("here");
       listItems +=
         "<li class='score-item'><span class='name'>" +
         bird.nickname +
