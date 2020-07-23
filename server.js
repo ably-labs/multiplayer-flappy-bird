@@ -1,6 +1,6 @@
 const envConfig = require("dotenv").config();
 const express = require("express");
-const Ably = require("Ably");
+const Ably = require("ably");
 const gameChannelName = "flappy-game";
 let gameChannel;
 let birdCount = 0;
