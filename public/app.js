@@ -291,7 +291,6 @@ document.addEventListener("DOMContentLoaded", () => {
       b.score - a.score;
     });
     leaderBoard.forEach((bird) => {
-      console.log("here");
       listItems +=
         "<li class='score-item'><span class='name'>" +
         bird.nickname +
