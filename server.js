@@ -83,11 +83,11 @@ realtime.connection.once("connected", () => {
       birds[msg.clientId].isDead = true;
       setTimeout(() => {
         delete birds[msg.clientId];
-      }, 500);
-      // if (birdCount < 1) {
+      }, 600);
+      // if (birdCount === 0) {
       //   console.log("STOPPING GAME TICK");
-      //   //isGameTickerOn = false;
-      //   //clearInterval(gameTicker);
+      //   isGameTickerOn = false;
+      //   clearInterval(gameTicker);
       // }
     }
   });

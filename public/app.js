@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let birdBottom = 350;
   let gravity = 2;
   let isGameOver = false;
-  let gap = 450;
+  let gap = 440;
 
   const filterNickname = async (nicknameText) => {
     const http = new XMLHttpRequest();
