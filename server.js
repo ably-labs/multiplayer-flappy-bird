@@ -59,6 +59,7 @@ realtime.connection.once("connected", () => {
   });
   gameChannel = realtime.channels.get(gameChannelName);
   gameChannel.presence.subscribe("enter", (msg) => {
+    console.log("JOINED Bird Count: " + birdCount);
     if (++birdCount === 1 && !isGameTickerOn) {
       gameTicker = setInterval(startGameTick, 100);
       isGameTickerOn = true;
@@ -74,6 +75,7 @@ realtime.connection.once("connected", () => {
     subscribeToPlayerInput(msg.clientId);
   });
   gameChannel.presence.subscribe("leave", (msg) => {
+    console.log("LEFT Bird count" + birdCount);
     if (birds[msg.clientId] != undefined) {
       birdCount--;
       birds[msg.clientId].isDead = true;
