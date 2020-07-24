@@ -20,6 +20,9 @@ app.use(express.static("public"));
 
 const realtime = new Ably.Realtime({
   key: process.env.ABLY_API_KEY,
+  // log: {
+  //   level: 3,
+  // },
 });
 
 const uniqueId = function () {
@@ -79,11 +82,12 @@ realtime.connection.once("connected", () => {
   gameChannel.presence.subscribe("leave", (msg) => {
     if (birds[msg.clientId] != undefined) {
       birdCount--;
-      console.log("LEFT Bird count" + birdCount);
+      console.log("LEFT Bird count " + birdCount + " " + msg.clientId);
       birds[msg.clientId].isDead = true;
       setTimeout(() => {
         delete birds[msg.clientId];
-      }, 600);
+      }, 250);
+
       // if (birdCount === 0) {
       //   console.log("STOPPING GAME TICK");
       //   isGameTickerOn = false;

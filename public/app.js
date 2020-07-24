@@ -59,6 +59,9 @@ if (localStorage.getItem("flappy-nickname")) {
 
 const realtime = new Ably.Realtime({
   authUrl: "/auth",
+  // log: {
+  //   level: 3,
+  // },
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -200,13 +203,13 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           sortLeaderboard();
           gameOver();
-          isGameOver = true;
         }
       }
     }
   }
 
   function gameOver() {
+    console.log("dead");
     scoreLabel.innerHTML += " | Game Over";
     clearInterval(gameTimerId);
     isGameOver = true;
@@ -215,7 +218,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ground.classList.remove("ground-moving");
     gameChannel.presence.leave();
     gameChannel.detach();
-    realtime.connection.close();
+    setTimeout(() => {
+      realtime.connection.close();
+    }, 200);
   }
 
   function sendPositionUpdates() {
@@ -249,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sky.removeChild(allBirds[item].el);
             delete allBirds[item];
           } else {
-            if (!isGameOver) {
+            if (!isGameOver && !isDead) {
               allBirds[item] = {};
               allBirds[item].el = document.createElement("div");
               allBirds[item].el.classList.add("other-bird");
