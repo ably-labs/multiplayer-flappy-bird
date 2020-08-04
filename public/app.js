@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let birdBottom = 350;
   let gravity = 2;
   let isGameOver = false;
-  let gap = 450;
+  let gap = 440;
 
   const filterNickname = async (nicknameText) => {
     const http = new XMLHttpRequest();
@@ -200,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           sortLeaderboard();
           gameOver();
-          isGameOver = true;
         }
       }
     }
@@ -213,8 +212,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.removeEventListener("keydown", control);
     ground.classList.add("ground");
     ground.classList.remove("ground-moving");
-    gameChannel.presence.leave();
-    gameChannel.detach();
     realtime.connection.close();
   }
 
@@ -249,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sky.removeChild(allBirds[item].el);
             delete allBirds[item];
           } else {
-            if (!isGameOver) {
+            if (!isGameOver && !isDead) {
               allBirds[item] = {};
               allBirds[item].el = document.createElement("div");
               allBirds[item].el.classList.add("other-bird");
@@ -291,7 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
       b.score - a.score;
     });
     leaderBoard.forEach((bird) => {
-      console.log("here");
       listItems +=
         "<li class='score-item'><span class='name'>" +
         bird.nickname +

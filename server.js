@@ -59,7 +59,10 @@ realtime.connection.once("connected", () => {
   });
   gameChannel = realtime.channels.get(gameChannelName);
   gameChannel.presence.subscribe("enter", (msg) => {
-    if (++birdCount === 1 && !isGameTickerOn) {
+    birdCount++;
+    console.log("JOINED Bird Count: " + birdCount);
+    if (birdCount === 1 && !isGameTickerOn) {
+      console.log("STARTING GAME TICK");
       gameTicker = setInterval(startGameTick, 100);
       isGameTickerOn = true;
     }
@@ -76,11 +79,14 @@ realtime.connection.once("connected", () => {
   gameChannel.presence.subscribe("leave", (msg) => {
     if (birds[msg.clientId] != undefined) {
       birdCount--;
+      console.log("LEFT Bird count " + birdCount + " " + msg.clientId);
       birds[msg.clientId].isDead = true;
       setTimeout(() => {
         delete birds[msg.clientId];
-      }, 500);
-      if (birdCount < 1) {
+      }, 250);
+
+      if (birdCount === 0) {
+        console.log("STOPPING GAME TICK");
         isGameTickerOn = false;
         clearInterval(gameTicker);
       }
