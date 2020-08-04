@@ -20,9 +20,6 @@ app.use(express.static("public"));
 
 const realtime = new Ably.Realtime({
   key: process.env.ABLY_API_KEY,
-  // log: {
-  //   level: 4,
-  // },
 });
 
 const uniqueId = function () {

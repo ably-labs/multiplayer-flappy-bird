@@ -59,9 +59,6 @@ if (localStorage.getItem("flappy-nickname")) {
 
 const realtime = new Ably.Realtime({
   authUrl: "/auth",
-  // log: {
-  //   level: 4,
-  // },
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -209,18 +206,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function gameOver() {
-    console.log("dead");
     scoreLabel.innerHTML += " | Game Over";
     clearInterval(gameTimerId);
     isGameOver = true;
     document.removeEventListener("keydown", control);
     ground.classList.add("ground");
     ground.classList.remove("ground-moving");
-    // gameChannel.presence.leave();
-    // gameChannel.detach();
-    // setTimeout(() => {
     realtime.connection.close();
-    // }, 200);
   }
 
   function sendPositionUpdates() {
