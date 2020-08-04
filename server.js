@@ -21,7 +21,7 @@ app.use(express.static("public"));
 const realtime = new Ably.Realtime({
   key: process.env.ABLY_API_KEY,
   // log: {
-  //   level: 3,
+  //   level: 4,
   // },
 });
 
@@ -88,11 +88,11 @@ realtime.connection.once("connected", () => {
         delete birds[msg.clientId];
       }, 250);
 
-      // if (birdCount === 0) {
-      //   console.log("STOPPING GAME TICK");
-      //   isGameTickerOn = false;
-      //   clearInterval(gameTicker);
-      // }
+      if (birdCount === 0) {
+        console.log("STOPPING GAME TICK");
+        isGameTickerOn = false;
+        clearInterval(gameTicker);
+      }
     }
   });
 });

@@ -60,7 +60,7 @@ if (localStorage.getItem("flappy-nickname")) {
 const realtime = new Ably.Realtime({
   authUrl: "/auth",
   // log: {
-  //   level: 3,
+  //   level: 4,
   // },
 });
 
@@ -216,11 +216,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.removeEventListener("keydown", control);
     ground.classList.add("ground");
     ground.classList.remove("ground-moving");
-    gameChannel.presence.leave();
-    gameChannel.detach();
-    setTimeout(() => {
-      realtime.connection.close();
-    }, 200);
+    // gameChannel.presence.leave();
+    // gameChannel.detach();
+    // setTimeout(() => {
+    realtime.connection.close();
+    // }, 200);
   }
 
   function sendPositionUpdates() {
